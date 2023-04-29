@@ -30,11 +30,28 @@
             overflow: hidden;
         }
 
+        #tools-button {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        #fieldglass {
+            width: 50px;
+            margin-right: 10px;
+        }
+
+        #tools-label {
+            color: var(--white);
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 2vh;
+        }
+
         .collapsible {
             background-color: var(--background-dark);
             color: white;
             cursor: pointer;
-            padding: 20px;
+            padding: 10px;
             width: 100%;
             border: none;
             text-align: left;
@@ -53,7 +70,7 @@
 
         #magnet-output {
             display: none;
-            width: 50%;
+            width: 100%;
         }
 
         .menu-content {
@@ -85,7 +102,7 @@
         }
 
         .page-content {
-            height: 70vh;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -93,7 +110,7 @@
         }
 
         .magnet-container {
-            height: 400px;
+            height: 700px;
             display: none;
             flex-direction: column;
             align-items: center;
@@ -230,7 +247,7 @@
     </style>
 </head>
 <body>
-    <button class="collapsible" onclick="expandMenu()">Tools</button>
+    <button class="collapsible" id="tools-button" onclick="expandMenu()"><img src="fieldglass.png" id="fieldglass"><div id="tools-label">fieldglass</div></button>
     <div class="menu-content" id="content">
         <div class="button-wrapper" id="buttons">
             <button class="sensor-button" onclick="showMag()">1</button>
@@ -256,22 +273,36 @@
                 <button class="mag-button" id="mag-start" onclick="magStartButton()">Start</button>
                 <button class="mag-button" id="mag-stop" onclick="magStopButton()">Stop</button>
             </div>
+        
+
+            <div class="slide-container" style="width: 200px; margin-top: 50px;">
+                <input type="range" min="-90" max="90" value="90" class="slider" id="myRange">
+            </div>
+
+            <table id="magnet-output">
+                <tr>
+                    <th>Timestamp</th>
+                    <th>X-Axis</th>
+                    <th>Y-Axis</th>
+                    <th>Z-Axis</th>
+                    <th>Ambient</th>
+                </tr>
+                <tr>
+                    <td>12345</td>
+                    <td>23456</td>
+                    <td>34567</td>
+                    <td>45678</td>
+                    <td>56789</td>
+                </tr>
+                <tr>
+                    <td>12345</td>
+                    <td>23456</td>
+                    <td>34567</td>
+                    <td>45678</td>
+                    <td>56789</td>
+                </tr>
+            </table>
         </div>
-
-        <div class="slide-container" style="width: 200px; margin-top: 50px;">
-            <input type="range" min="-90" max="90" value="90" class="slider" id="myRange">
-        </div>
-
-        <table id="magnet-output">
-            <tr>
-                <th>Timestamp</th>
-                <th>X-Axis</th>
-                <th>Y-Axis</th>
-                <th>Z-Axis</th>
-                <th>Ambient</th>
-            </tr>
-        </table>
-
 
     </div>
     
@@ -338,8 +369,7 @@
     magSensor.onerror = event => console.log(event.error.name, event.error.message);
 
     function log(t, x, y, z, M) {
-        var table = document.getElementById('magnet-output');
-        table.style.display = "block";
+        showMagnetTable();
         // Create an empty <tr> element and add it to the 1st position of the table:
         var row = table.insertRow(-1);
         // Insert new cells (<td> elements) at the nth position of the new <tr> element:
@@ -356,9 +386,20 @@
         cell5.innerHTML = M;
     };
 
+    function showMagnetTable() {
+        var table = document.getElementById('magnet-output');
+        table.style.display = "block";
+    }
+
+    function hideMagnetTable() {
+        var table = document.getElementById('magnet-output');
+        table.style.display = "none";
+    }
+
     //show the magmetometer when selected from menu
     function showMag() {
         collapseMenu();
+        showMagnetTable();
         var gauge = document.getElementById("magnet");
         gauge.classList.add("active-gauge");
     }
