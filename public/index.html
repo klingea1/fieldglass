@@ -5,253 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>fieldglass</title>
-    <style>
-        :root {
-            /* --gray: rgb(253, 251, 252);; */ 
-            --gray: rgb(34, 48, 64);
-            --blue: rgb(0, 122, 253);
-            --green: rgb(6, 215, 108);
-            --white: rgb(253, 251, 252);
-            --red: rgb(171, 37, 32);
-            --purple: rgb(110, 13, 117);
-            --background-dark: rgb(18,24,31);
-            /* --white: rgb(34, 48, 64); */
-        }
-
-        * {
-            margin:0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            min-height: 100vh;
-            background-color: var(--gray);
-            overflow: hidden;
-        }
-
-        #tools-button {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-        }
-
-        #fieldglass {
-            width: 50px;
-            margin-right: 10px;
-        }
-
-        #tools-label {
-            color: var(--white);
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 2vh;
-        }
-
-        .collapsible {
-            background-color: var(--background-dark);
-            color: white;
-            cursor: pointer;
-            padding: 10px;
-            width: 100%;
-            border: none;
-            text-align: left;
-            outline: none;
-            font-size: 15px;
-        }
-
-        .active, .collapsible:hover {
-            background-color: #555;
-        }
-
-        .magnet-label {
-            color: var(--white);
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        #magnet-output {
-            display: none;
-            width: 100%;
-        }
-
-        .menu-content {
-            margin-bottom: 3%;
-            height: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            transition: max-height 0.2s ease-out;
-            background-color: rgb(21, 31, 43);
-            transition: height 1s;
-        }
-
-        .button-wrapper { 
-            width: 50vw;
-            height: 10vh;
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            align-content: space-around;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .sensor-button { 
-            width: 10vw;
-            height: 5vh;
-        }
-
-        .page-content {
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .magnet-container {
-            height: 700px;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-around;
-            
-        }
-
-        .magnet-gauge {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            animation: neon2 1.5s ease-in-out infinite alternate;
-        }
-        
-        .active-gauge{
-            display: flex;
-            animation: fadeIn .5s ease-in-out;
-        }
-
-        #magnet-buttons-container {
-            width: 100%;
-            height: 10%;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-around;
-            align-items: center;
-        }
-
-        .mag-button {
-            height: 80%;
-            width: 45%;
-        }
-
-        .progress {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border: .1rem solid var(--white);
-            border-bottom: .1rem solid var(--gray);
-            border-radius: 50%;
-            outline: .2rem solid var(--white);
-            outline-offset: .4rem;
-            overflow: hidden;
-        }
-
-        .progress::before{
-            position: absolute;
-            content: '';
-            top:50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-            height: 80%;
-            background-color: var(--gray);
-            border-radius: 50%;
-            z-index: 200;
-        }
-        .progress::after{
-            position: absolute;
-            content: '';
-            top:50%;
-            width: 100%;
-            height: 50%;
-            background-color: var(--gray);
-        }
-
-        .bar {
-            position: absolute;
-            width: 50%;
-            height: 100%;
-            background-color: var(--green);
-            transform: rotate(90deg);
-            transform-origin: center right;
-            animation: rotate 2s ease-in-out;
-        }
-
-        .needle {
-            position: absolute;
-            width: 100%;
-            height: 50%;
-            background-color: var(--white)!important;
-            clip-path: polygon(50% 0, 50% 0, 52% 100%, 48% 100%);
-            transform: rotate(90deg);
-            transform-origin: bottom center;
-            animation: rotate 2s ease-in-out;
-            z-index: 300;
-
-        }
-        
-        .magnet-readout { 
-            position: absolute;
-            margin-top: 50%;
-            font: 1.7rem sans-serif;
-            color: var(--white);
-            z-index: 400;
-        }
-
-        @keyframes fadeIn {
-            0% {opacity: 0;}
-            100% {opacity: 1;}
-        }
-
-        @keyframes rotate {
-            0% {
-                background-color: var(--blue);
-                transform: rotate(-90deg);
-            }
-            80% { background-color: var(--blue); }
-        }
-
-        @keyframes neon2 {
-            from {
-                box-shadow: 0 0 6px #fff, 0 0 12px #fff, 0 0 18px #fff, 0 0 24px #566f8c, 0 0 50px #566f8c, 0 0 60px #566f8c, 0 0 75px #566f8c, 0 0 90px #566f8c;
-            }
-            to {
-                box-shadow: 0 0 2px #fff, 0 0 6px #fff, 0 0 10px #fff, 0 0 14px #566f8c, 0 0 20px #566f8c, 0 0 28px #566f8c, 0 0 40px #566f8c, 0 0 54px #566f8c;
-            }
-        }
-
-        @media only screen and (max-width: 900px) {
-            .button-wrapper {
-                height: 15vh;
-            }
-            .sensor-button { 
-            width: 45%;
-            height: 35%;
-            }
-        }
-
-    </style>
+    <link rel="icon" type="image/x-icon" href=".\img\favicon.png">
+    <link rel="stylesheet" href=".\css\fieldglass.css">
 </head>
 <body>
-    <button class="collapsible" id="tools-button" onclick="expandMenu()"><img src="fieldglass.png" id="fieldglass"><div id="tools-label">fieldglass</div></button>
+    <button class="collapsible" id="tools-button" onclick="expandMenu()"><img src=".\img\fieldglass.png" id="fieldglass"><div id="tools-label">fieldglass</div></button>
     <div class="menu-content" id="content">
         <div class="button-wrapper" id="buttons">
             <button class="sensor-button" onclick="showMag()">1</button>
-            <button class="sensor-button" onclick="hideSensor()">2</button>
+            <button class="sensor-button" onclick="hideSensor(), hideTable(), collapseMenu()">2</button>
             <button class="sensor-button">3</button>
             <button class="sensor-button">4</button>
         </div>
@@ -278,8 +40,9 @@
             <div class="slide-container" style="width: 200px; margin-top: 50px;">
                 <input type="range" min="-90" max="90" value="90" class="slider" id="myRange">
             </div>
-
-            <table id="magnet-output">
+        </div>
+        <div id="table-container">
+            <table class="output-table" id="magnet-output">
                 <tr>
                     <th>Timestamp</th>
                     <th>X-Axis</th>
@@ -366,7 +129,7 @@
         log(t,x,y,z,M)
     };
 
-    magSensor.onerror = event => console.log(event.error.name, event.error.message);
+    magSensor.onerror = event => alert(event.error.name + ' ' + event.error.message);
 
     function log(t, x, y, z, M) {
         showMagnetTable();
@@ -388,12 +151,12 @@
 
     function showMagnetTable() {
         var table = document.getElementById('magnet-output');
-        table.style.display = "block";
+        table.classList.add("active-table");
     }
 
-    function hideMagnetTable() {
-        var table = document.getElementById('magnet-output');
-        table.style.display = "none";
+    function hideTable() {
+        var table = document.querySelector(".active-table");
+        table.classList.remove("active-table");
     }
 
     //show the magmetometer when selected from menu
