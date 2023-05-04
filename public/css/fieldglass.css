@@ -22,12 +22,6 @@ body {
     overflow: hidden;
 }
 
-#tools-button {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-}
-
 #fieldglass {
     width: 50px;
     margin-right: 10px;
@@ -39,7 +33,10 @@ body {
     font-size: 2vh;
 }
 
-.collapsible {
+.collapse-button {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
     background-color: var(--background-dark);
     color: var(--white_);
     cursor: pointer;
@@ -55,25 +52,6 @@ body {
     background-color: #555;
 }
 
-.magnet-label {
-    color: var(--white);
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-#table-container {
-}
-
-.output-table {
-    display: none;
-    width: 100%;
-    color: var(--white)
-}
-
-.active-table {
-    display: block;
-    animation: fadeIn .5s ease-in-out;
-}
-
 .menu-content {
     margin-bottom: 3%;
     height: 0;
@@ -86,7 +64,7 @@ body {
     transition: height 1s;
 }
 
-.button-wrapper { 
+.menu-button-wrapper { 
     width: 50vw;
     height: 10vh;
     display: flex;
@@ -97,9 +75,11 @@ body {
     align-items: center;
 }
 
-.sensor-button { 
+.menu-button { 
     width: 10vw;
     height: 5vh;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 600;
 }
 
 .page-content {
@@ -110,13 +90,58 @@ body {
     flex-direction: column;
 }
 
-.magnet-container {
+.sensor-container {
     height: 700px;
+    width:100%;
     display: none;
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
     
+}
+
+.sensor-label {
+    color: var(--white);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.sensor-table {
+    display: none;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    table-layout: auto;
+    border-collapse: collapse;
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--white);
+}
+
+.sensor-table tbody {
+    display: block;
+    width: 100%;
+    overflow: auto;
+    height: 100px;
+}
+
+.sensor-table th {
+    background: var(--background-dark);
+    color: var(--white);
+  }
+
+.sensor-table thead tr {
+    display: block;
+}
+
+.sensor-table th,
+.sensor-table td {
+    padding: 5px;
+    text-align: left;
+    width: 200px;
+  }
+
+.active-table {
+    display: block;
+    animation: fadeIn .5s ease-in-out;
 }
 
 .magnet-gauge {
@@ -130,13 +155,13 @@ body {
     animation: neon2 1.5s ease-in-out infinite alternate;
 }
 
-.active-gauge{
+.active-sensor{
     display: flex;
     animation: fadeIn .5s ease-in-out;
 }
 
-#magnet-buttons-container {
-    width: 100%;
+.sensor-buttons-container {
+    width: 50%;
     height: 10%;
     display: flex;
     flex-direction: row;
@@ -144,9 +169,9 @@ body {
     align-items: center;
 }
 
-.mag-button {
-    height: 80%;
-    width: 45%;
+.sensor-button {
+    height: 70%;
+    width: 200px;
 }
 
 .progress {
@@ -236,11 +261,16 @@ body {
 }
 
 @media only screen and (max-width: 900px) {
-    .button-wrapper {
+    .menu-button-wrapper {
         height: 15vh;
     }
-    .sensor-button { 
-    width: 45%;
-    height: 35%;
+    .menu-button {
+        height: 30%;
+        width: 45%;
     }
+    .sensor-button { 
+        height: 70%;
+        width: 45%;
+    }
+    
 }

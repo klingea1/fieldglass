@@ -9,21 +9,20 @@
     <link rel="stylesheet" href=".\css\fieldglass.css">
 </head>
 <body>
-    <button class="collapsible" id="tools-button" onclick="expandMenu()"><img src=".\img\fieldglass.png" id="fieldglass"><div id="tools-label">fieldglass</div></button>
+    <button class="collapse-button" onclick="expandMenu()"><img src=".\img\fieldglass.png" id="fieldglass"><div id="tools-label">fieldglass</div></button>
     <div class="menu-content" id="content">
-        <div class="button-wrapper" id="buttons">
-            <button class="sensor-button" onclick="showMag()">1</button>
-            <button class="sensor-button" onclick="hideSensor(), hideTable(), collapseMenu()">2</button>
-            <button class="sensor-button">3</button>
-            <button class="sensor-button">4</button>
+        <div class="menu-button-wrapper" id="menu-buttons">
+            <button class="menu-button" onclick="showMag()">Magnetometer</button>
+            <button class="menu-button" onclick="hideSensor(), hideTable(), collapseMenu()">Gyroscope</button>
+            <button class="menu-button">3</button>
+            <button class="menu-button">4</button>
         </div>
     </div>
 
-   
-
     <div class="page-content">
-        <div class="magnet-container"  id="magnet">
-            <h2 class="magnet-label">Magnetometer</h2>
+        <div class="sensor-container"  id="magnet-container">
+            <h2 class="sensor-label">Magnetometer</h2>
+            
             <div class="magnet-gauge">
                 <div class="progress">
                     <div class="bar"></div>
@@ -31,18 +30,17 @@
                 </div>
                 <span class="magnet-readout">45 μT</span>
             </div>
-            <div id="magnet-buttons-container">
-                <button class="mag-button" id="mag-start" onclick="magStartButton()">Start</button>
-                <button class="mag-button" id="mag-stop" onclick="magStopButton()">Stop</button>
+
+            <div class="sensor-buttons-container" id="magnet-buttons">
+                <button class="sensor-button" id="mag-start" onclick="magStartButton()">Start</button>
+                <button class="sensor-button" id="mag-stop" onclick="magStopButton()">Stop</button>
             </div>
-        
 
             <div class="slide-container" style="width: 200px; margin-top: 50px;">
                 <input type="range" min="-90" max="90" value="90" class="slider" id="myRange">
             </div>
-        </div>
-        <div id="table-container">
-            <table class="output-table" id="magnet-output">
+        
+            <table class="sensor-table" id="magnet-output">
                 <tr>
                     <th>Timestamp</th>
                     <th>X-Axis</th>
@@ -65,18 +63,19 @@
                     <td>56789</td>
                 </tr>
             </table>
+
         </div>
 
     </div>
     
 
 
-
+-
 <script>
     //expand the menu
     function expandMenu() {
         var content = document.getElementById("content");
-        var buttons = document.getElementById("buttons");
+        var buttons = document.getElementById("menu-buttons");
         if (content.style.height){
             content.style.height = null;
         } else {
@@ -92,8 +91,8 @@
 
     //hide the active sensor readout
     function hideSensor() {
-        var sensor = document.querySelector(".active-gauge");
-        sensor.classList.remove("active-gauge");
+        var sensor = document.querySelector(".active-sensor");
+        sensor.classList.remove("active-sensor");
     }
 
 
@@ -134,6 +133,7 @@
     function log(t, x, y, z, M) {
         showMagnetTable();
         // Create an empty <tr> element and add it to the 1st position of the table:
+        var table = document.getElementById('magnet-output');
         var row = table.insertRow(-1);
         // Insert new cells (<td> elements) at the nth position of the new <tr> element:
         var cell1 = row.insertCell(0);
@@ -163,8 +163,8 @@
     function showMag() {
         collapseMenu();
         showMagnetTable();
-        var gauge = document.getElementById("magnet");
-        gauge.classList.add("active-gauge");
+        var active = document.getElementById("magnet-container");
+        active.classList.add("active-sensor");
     }
 
     //magnetomer needle gauge motion
