@@ -212,7 +212,7 @@ body {
     width: 50%;
     height: 100%;
     background-color: var(--green);
-    transform: rotate(90deg);
+    transform: rotate(-90deg);
     transform-origin: center right;
     animation: rotate 2s ease-in-out;
 }
@@ -223,7 +223,7 @@ body {
     height: 50%;
     background-color: var(--white)!important;
     clip-path: polygon(50% 0, 50% 0, 52% 100%, 48% 100%);
-    transform: rotate(90deg);
+    transform: rotate(-90deg);
     transform-origin: bottom center;
     animation: rotate 2s ease-in-out;
     z-index: 300;
@@ -268,9 +268,12 @@ body {
         height: 30%;
         width: 45%;
     }
+    .sensor-buttons-container {
+        width: 80%;
+    }
     .sensor-button { 
         height: 70%;
-        width: 45%;
+        width: 30%;
     }
     
 }

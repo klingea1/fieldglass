@@ -7,6 +7,9 @@
     <title>fieldglass</title>
     <link rel="icon" type="image/x-icon" href=".\img\favicon.png">
     <link rel="stylesheet" href=".\css\fieldglass.css">
+
+    <script src=".\js\table.js"></script>
+
 </head>
 <body>
     <button class="collapse-button" onclick="expandMenu()"><img src=".\img\fieldglass.png" id="fieldglass"><div id="tools-label">fieldglass</div></button>
@@ -34,6 +37,7 @@
             <div class="sensor-buttons-container" id="magnet-buttons">
                 <button class="sensor-button" id="mag-start" onclick="magStartButton()">Start</button>
                 <button class="sensor-button" id="mag-stop" onclick="magStopButton()">Stop</button>
+                <button class="sensor-button" id="download" onclick="tableToCSV()">Download</button>
             </div>
 
             <div class="slide-container" style="width: 200px; margin-top: 50px;">
@@ -50,22 +54,14 @@
                 </tr>
                 <tr>
                     <td>12345</td>
-                    <td>23456</td>
-                    <td>34567</td>
-                    <td>45678</td>
-                    <td>56789</td>
                 </tr>
                 <tr>
                     <td>12345</td>
-                    <td>23456</td>
-                    <td>34567</td>
-                    <td>45678</td>
-                    <td>56789</td>
                 </tr>
             </table>
 
         </div>
-
+    
     </div>
     
 
@@ -116,21 +112,31 @@
         let y = magSensor.y;
         let z = magSensor.z;
         let M = Math.sqrt(Math.pow(x,2) + Math.pow(y,2) + Math.pow(z,2));
+        if (M > 100) {
+            R = 90;
+        } else {
+            if (M < 20) {
+                R = -90;
+            } else {
+                R = ((M/80)*180)-90;
+            }
+        };
+            
 
         t = t.toFixed(0);
         x = x.toFixed(4);
         y = y.toFixed(4);
         z = z.toFixed(4);
         M = M.toFixed(4);
+        R = R.toFixed(2);
 
-        console.log("t, x, y, z, M", t, x, y, z, M);
 
-        log(t,x,y,z,M)
+        log(t,x,y,z,M,R)
     };
 
     magSensor.onerror = event => alert(event.error.name + ' ' + event.error.message);
 
-    function log(t, x, y, z, M) {
+    function log(t, x, y, z, M, R) {
         showMagnetTable();
         // Create an empty <tr> element and add it to the 1st position of the table:
         var table = document.getElementById('magnet-output');
@@ -147,6 +153,11 @@
         cell3.innerHTML = y;
         cell4.innerHTML = z;
         cell5.innerHTML = M;
+        //set readout and rotation degrees to R
+        document.querySelector('.magnet-readout').textContent = M + ' μT';
+        document.querySelector('.bar').style.transform = 'rotate('+R+'deg)';
+        document.querySelector('.needle').style.transform = 'rotate('+R+'deg)';
+
     };
 
     function showMagnetTable() {
