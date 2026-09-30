@@ -6,11 +6,18 @@ export interface SensorsPlugin {
   listSensors(): Promise<{ sensors: SensorInfo[] }>;
   start(options: { type: SensorType; rateHz: number }): Promise<void>;
   stop(options: { type: SensorType }): Promise<void>;
+  geomagnetic(options: { latitude: number; longitude: number; altitude?: number }): Promise<{
+    declination: number;
+    inclination: number;
+    fieldStrengthUt: number;
+  }>;
   addListener(
     event: 'readings',
     listener: (event: { readings: Reading[] }) => void,
   ): Promise<PluginListenerHandle>;
 }
+
+export const Sensors = registerPlugin<SensorsPlugin>('Sensors');
 
 /** Real sensor readings from Android, via the native Sensors plugin. */
 export class NativeSource implements SensorSource {
@@ -18,7 +25,7 @@ export class NativeSource implements SensorSource {
   private readonly listeners = new Set<ReadingListener>();
   private subscribed = false;
 
-  constructor(private readonly plugin: SensorsPlugin = registerPlugin<SensorsPlugin>('Sensors')) {}
+  constructor(private readonly plugin: SensorsPlugin = Sensors) {}
 
   async listSensors(): Promise<SensorInfo[]> {
     return (await this.plugin.listSensors()).sensors;

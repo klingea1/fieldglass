@@ -37,13 +37,15 @@ export const TOOLS: ToolDefinition[] = [
     id: 'level',
     name: 'Level',
     summary: 'Bubble level and inclinometer',
-    sensors: ['accelerometer'],
+    sensors: ['gravity'],
+    load: () => import('../tools/level/Level.svelte'),
   },
   {
     id: 'compass',
     name: 'Compass',
     summary: 'Magnetic and true heading',
-    sensors: ['magnetometer', 'accelerometer'],
+    sensors: ['magnetometer', 'gravity'],
+    load: () => import('../tools/compass/Compass.svelte'),
   },
   {
     id: 'sound-meter',

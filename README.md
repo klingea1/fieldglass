@@ -10,7 +10,7 @@ you what your hardware reports and lets you record it, but treat readings as ind
 
 ## Status
 
-Phase 2 (metal detector). On the phone, readings come from Android's sensors through a native
+Phase 3 (level and compass). On the phone, readings come from Android's sensors through a native
 plugin. In a desktop browser the same screens run on a simulator, and a yellow "Simulated data"
 badge says so.
 
@@ -23,6 +23,13 @@ Tools so far:
   rises with the signal, and three sensitivity levels. Built on the uncalibrated magnetometer minus
   Android's bias estimate, so turning the phone doesn't register as metal and a bias update
   re-zeroes instead of looking like a find.
+- **Level**: bubble level when the phone lies flat, inclinometer when it stands on an edge, with
+  degrees, grade, a saved zero and hold.
+- **Compass**: tilt-compensated heading with magnetic or true north. True north looks up
+  declination from Android's built-in World Magnetic Model using approximate location, and the
+  expected field strength there is used to warn about nearby interference.
+
+The app is locked to portrait so the screen never rotates under a measurement.
 
 ## Stack
 

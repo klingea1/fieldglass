@@ -8,6 +8,7 @@ function fakePlugin() {
     listSensors: vi.fn(async () => ({ sensors: [] })),
     start: vi.fn(async () => {}),
     stop: vi.fn(async () => {}),
+    geomagnetic: vi.fn(async () => ({ declination: 0, inclination: 0, fieldStrengthUt: 50 })),
     addListener: vi.fn(async (_event, listener) => {
       emit = listener;
       return { remove: async () => {} };

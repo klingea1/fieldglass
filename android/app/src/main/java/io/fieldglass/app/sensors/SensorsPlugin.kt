@@ -1,6 +1,7 @@
 package io.fieldglass.app.sensors
 
 import android.content.Context
+import android.hardware.GeomagneticField
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -95,6 +96,29 @@ class SensorsPlugin : Plugin() {
             unregister(type)
             call.resolve()
         }
+    }
+
+    /**
+     * Earth's expected magnetic field at a location, from the World Magnetic Model
+     * built into Android. Declination turns a magnetic heading into a true one.
+     */
+    @PluginMethod
+    fun geomagnetic(call: PluginCall) {
+        val latitude = call.getDouble("latitude") ?: return call.reject("latitude is required")
+        val longitude = call.getDouble("longitude") ?: return call.reject("longitude is required")
+        val altitude = call.getDouble("altitude") ?: 0.0
+        val field = GeomagneticField(
+            latitude.toFloat(),
+            longitude.toFloat(),
+            altitude.toFloat(),
+            System.currentTimeMillis(),
+        )
+        val result = JSObject()
+        result.put("declination", field.declination.toDouble())
+        result.put("inclination", field.inclination.toDouble())
+        // Android reports nanotesla; everything else in fieldglass uses microtesla.
+        result.put("fieldStrengthUt", field.fieldStrength / 1000.0)
+        call.resolve(result)
     }
 
     // Sensors keep draining the battery in the background, so release them while
