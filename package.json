@@ -18,7 +18,7 @@
     "test": "vitest run",
     "android": "npm run build && cap sync android && cap run android",
     "android:open": "cap open android",
-    "icons": "npx @capacitor/assets@3 generate --android --iconBackgroundColor '#12181f' --iconBackgroundColorDark '#12181f' --splashBackgroundColor '#12181f' --splashBackgroundColorDark '#12181f'"
+    "icons": "npx @capacitor/assets@3 generate --android --splashBackgroundColor '#12181f' --splashBackgroundColorDark '#12181f'"
   },
   "dependencies": {
     "@capacitor-community/keep-awake": "^8.0.1",
