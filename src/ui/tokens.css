@@ -1,0 +1,36 @@
+/*
+ * Design tokens. Every color, size and font in the app comes from here, so a
+ * redesign means editing this file. Values carry over the original palette.
+ */
+:root {
+  --color-bg: rgb(34, 48, 64);
+  --color-bg-deep: rgb(18, 24, 31);
+  --color-surface: rgb(21, 31, 43);
+  --color-surface-raised: rgb(44, 61, 81);
+  --color-text: rgb(253, 251, 252);
+  --color-text-muted: rgb(160, 176, 194);
+  --color-accent: rgb(0, 122, 253);
+  --color-signal: rgb(6, 215, 108);
+  --color-warning: rgb(240, 180, 40);
+  --color-danger: rgb(220, 60, 55);
+  --color-glow: rgb(86, 111, 140);
+
+  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-mono: ui-monospace, 'Roboto Mono', Menlo, monospace;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+  --text-display: 2.5rem;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --tap-min: 48px;
+}
