@@ -3,6 +3,8 @@
   import {
     NO_ZERO,
     applyZero,
+    hasZero,
+    normalizeZero,
     tiltFromGravity,
     zeroFrom,
     type LevelZero,
@@ -17,15 +19,17 @@
   /** Degrees at the edge of the vials. */
   const VIAL_RANGE = 10;
   const SMOOTHING = 0.25;
+  /** CSS rotation that keeps the edge view upright for each edge-down position. */
+  const VIEW_ROTATION = [0, 90, 180, -90];
 
-  let zero = $state<LevelZero>(loadSetting('level.zero', NO_ZERO));
+  let zero = $state<LevelZero>(normalizeZero(loadSetting<unknown>('level.zero', NO_ZERO)));
   let raw = $state<Tilt | null>(null);
   let held = $state<Tilt | null>(null);
   let sensorError = $state<string | null>(null);
   let gravity: number[] | null = null;
 
   const tilt = $derived(held ?? (raw ? applyZero(raw, zero) : null));
-  const zeroed = $derived(zero.edge !== 0 || zero.surface.x !== 0 || zero.surface.y !== 0);
+  const zeroed = $derived(hasZero(zero));
   const isLevel = $derived(
     tilt !== null &&
       (tilt.mode === 'surface' ? tilt.total : Math.abs(tilt.deviation)) < LEVEL_TOLERANCE,
@@ -111,30 +115,31 @@
     <p class="hint">Lying flat: measuring the surface under the phone.</p>
   {:else if tilt?.mode === 'edge'}
     {@const bx = clamp(tilt.deviation)}
-    <svg class="tube" viewBox="-160 -30 320 60" class:level={isLevel} aria-hidden="true">
-      <rect class="glass" x="-150" y="-22" width="300" height="44" rx="22" />
-      <line class="mark" x1="-22" x2="-22" y1="-22" y2="22" />
-      <line class="mark" x1="22" x2="22" y1="-22" y2="22" />
-      <ellipse class="bubble" cx={-120 * bx} rx="20" ry="14" />
-    </svg>
+    <div class="edge-view" style:transform="rotate({VIEW_ROTATION[tilt.quadrant]}deg)">
+      <svg class="tube" viewBox="-160 -30 320 60" class:level={isLevel} aria-hidden="true">
+        <rect class="glass" x="-150" y="-22" width="300" height="44" rx="22" />
+        <line class="mark" x1="-22" x2="-22" y1="-22" y2="22" />
+        <line class="mark" x1="22" x2="22" y1="-22" y2="22" />
+        <ellipse class="bubble" cx={120 * bx} rx="20" ry="14" />
+      </svg>
 
-    <p class="readout" class:level={isLevel} aria-live="polite">
-      {isLevel ? 'Level' : fmt(tilt.deviation)}
-    </p>
-    <dl class="axes">
-      <div>
-        <dt>Angle</dt>
-        <dd>{fmt(wrap180(tilt.angle))}</dd>
-      </div>
-      <div>
-        <dt>Grade</dt>
-        <dd>{grade(tilt.deviation).toFixed(1)}%</dd>
-      </div>
-    </dl>
-    <p class="hint">
-      On its edge: measuring how far the edge is from level or plumb. Angle is the rotation from
-      upright.
-    </p>
+      <p class="readout" class:level={isLevel} aria-live="polite">
+        {isLevel ? 'Level' : fmt(tilt.deviation)}
+      </p>
+      <dl class="axes">
+        <div>
+          <dt>Rotation</dt>
+          <dd>{fmt(wrap180(tilt.angle))}</dd>
+        </div>
+        <div>
+          <dt>Grade</dt>
+          <dd>{grade(tilt.deviation).toFixed(1)}%</dd>
+        </div>
+      </dl>
+      <p class="hint">
+        On its {tilt.quadrant % 2 ? 'long' : 'short'} edge: how far that edge is from level.
+      </p>
+    </div>
   {:else}
     <p class="hint">Waiting for the gravity sensor…</p>
   {/if}
@@ -183,9 +188,19 @@
     margin: 0 auto;
   }
 
+  .edge-view {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-4);
+    width: min(100%, 360px);
+    aspect-ratio: 1;
+    margin: 0 auto;
+    transition: transform 250ms ease;
+  }
+
   .tube {
     width: 100%;
-    margin: var(--space-6) 0;
   }
 
   .glass {

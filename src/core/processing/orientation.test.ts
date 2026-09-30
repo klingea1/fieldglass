@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { AngleSmoother, wrap180, wrap360 } from './angles';
 import { cardinal, magneticHeading } from './heading';
-import { NO_ZERO, applyZero, tiltFromGravity, zeroFrom } from './tilt';
+import { NO_ZERO, applyZero, normalizeZero, tiltFromGravity, zeroFrom } from './tilt';
 
 const G = 9.80665;
 const rad = (deg: number) => (deg * Math.PI) / 180;
@@ -48,7 +48,35 @@ describe('tiltFromGravity', () => {
     const tilt = tiltFromGravity([G * Math.sin(rad(88)), G * Math.cos(rad(88)), 0]);
     if (tilt.mode !== 'edge') throw new Error('expected edge mode');
     expect(tilt.angle).toBeCloseTo(88);
+    expect(tilt.quadrant).toBe(1);
     expect(tilt.deviation).toBeCloseTo(-2);
+  });
+
+  it('identifies which edge is down', () => {
+    const edge = (deg: number) => {
+      const tilt = tiltFromGravity([G * Math.sin(rad(deg)), G * Math.cos(rad(deg)), 0]);
+      return tilt.mode === 'edge' ? tilt.quadrant : null;
+    };
+    expect([edge(0), edge(90), edge(180), edge(-90), edge(-46)]).toEqual([0, 1, 2, 3, 3]);
+  });
+
+  it('keeps a separate zero for each edge', () => {
+    const at = (deg: number) =>
+      tiltFromGravity([G * Math.sin(rad(deg)), G * Math.cos(rad(deg)), 0]);
+    const zero = zeroFrom(at(91), NO_ZERO);
+    const landscape = applyZero(at(91), zero);
+    const portrait = applyZero(at(1), zero);
+    if (landscape.mode !== 'edge' || portrait.mode !== 'edge') throw new Error('expected edge');
+    expect(landscape.deviation).toBeCloseTo(0);
+    expect(portrait.deviation).toBeCloseTo(1);
+  });
+
+  it('reads stored zeros, including the old single-edge format', () => {
+    expect(normalizeZero({ surface: { x: 1, y: 2 }, edge: 0.5 })).toEqual({
+      surface: { x: 1, y: 2 },
+      edge: [0, 0, 0, 0],
+    });
+    expect(normalizeZero(null)).toEqual(NO_ZERO);
   });
 
   it('zeroes against a reference surface', () => {
