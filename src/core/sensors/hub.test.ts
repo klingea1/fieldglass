@@ -63,4 +63,27 @@ describe('SensorHub with SimulatedSource', () => {
     await advance(1000);
     expect(listener.mock.calls.every(([r]) => r.type === 'magnetometer')).toBe(true);
   });
+
+  it('reports a sensor that fails to start to its subscribers', async () => {
+    vi.spyOn(source, 'start').mockRejectedValueOnce(new Error('This phone has no light sensor'));
+    const onError = vi.fn();
+    hub.subscribe('light', 10, () => {}, onError);
+    await advance(0);
+    expect(onError).toHaveBeenCalledWith(new Error('This phone has no light sensor'));
+  });
+
+  it('can retry a sensor after it failed to start', async () => {
+    const start = vi.spyOn(source, 'start').mockRejectedValueOnce(new Error('busy'));
+    const unsubscribe = hub.subscribe(
+      'light',
+      10,
+      () => {},
+      () => {},
+    );
+    await advance(0);
+    unsubscribe();
+    hub.subscribe('light', 10, () => {});
+    await advance(0);
+    expect(start).toHaveBeenCalledTimes(2);
+  });
 });

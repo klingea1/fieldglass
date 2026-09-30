@@ -13,6 +13,13 @@ export interface ToolDefinition {
 
 export const TOOLS: ToolDefinition[] = [
   {
+    id: 'sensors',
+    name: 'Sensor info',
+    summary: 'Every sensor in this phone, with specs and live values',
+    sensors: [],
+    load: () => import('../tools/sensor-info/SensorInfo.svelte'),
+  },
+  {
     id: 'magnetometer',
     name: 'Magnetometer',
     summary: 'Magnetic field strength on three axes',

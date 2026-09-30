@@ -1,8 +1,11 @@
-import type { Reading, ReadingListener, SensorSource, SensorType } from './types';
+import type { Reading, ReadingListener, SensorInfo, SensorSource, SensorType } from './types';
+
+export type ErrorListener = (error: Error) => void;
 
 interface Subscription {
   rateHz: number;
   listener: ReadingListener;
+  onError?: ErrorListener;
 }
 
 /**
@@ -21,8 +24,21 @@ export class SensorHub {
     return this.source.simulated;
   }
 
-  subscribe(type: SensorType, rateHz: number, listener: ReadingListener): () => void {
-    const subscription: Subscription = { rateHz, listener };
+  listSensors(): Promise<SensorInfo[]> {
+    return this.source.listSensors();
+  }
+
+  /**
+   * Starts receiving readings. onError hears about a sensor that fails to start,
+   * e.g. one this phone doesn't have. Returns an unsubscribe function.
+   */
+  subscribe(
+    type: SensorType,
+    rateHz: number,
+    listener: ReadingListener,
+    onError?: ErrorListener,
+  ): () => void {
+    const subscription: Subscription = { rateHz, listener, onError };
     const subscribers = this.subscriptions.get(type) ?? new Set();
     subscribers.add(subscription);
     this.subscriptions.set(type, subscribers);
@@ -47,12 +63,18 @@ export class SensorHub {
     const running = this.runningRates.get(type) ?? 0;
     if (wanted === running) return;
 
-    if (wanted === 0) {
+    try {
+      if (wanted === 0) {
+        this.runningRates.delete(type);
+        await this.source.stop(type);
+      } else {
+        this.runningRates.set(type, wanted);
+        await this.source.start(type, wanted);
+      }
+    } catch (cause) {
       this.runningRates.delete(type);
-      await this.source.stop(type);
-    } else {
-      this.runningRates.set(type, wanted);
-      await this.source.start(type, wanted);
+      const error = cause instanceof Error ? cause : new Error(String(cause));
+      for (const { onError } of this.subscriptions.get(type) ?? []) onError?.(error);
     }
   }
 }

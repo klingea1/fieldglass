@@ -3,7 +3,7 @@
   import { keepAwake } from '../../core/platform/keep-awake';
   import { exportCSV } from '../../core/recording/export';
   import { Recorder, recordingFilename } from '../../core/recording/recorder';
-  import { sensors, type Reading } from '../../core/sensors';
+  import { sensors, type Reading, type SensorAccuracy } from '../../core/sensors';
   import Gauge from '../../ui/Gauge.svelte';
   import RecordControls from '../../ui/RecordControls.svelte';
 
@@ -18,16 +18,20 @@
   let count = $state(0);
   let latest = $state<{ x: number; y: number; z: number; total: number } | null>(null);
   let exportError = $state<string | null>(null);
+  let sensorError = $state<string | null>(null);
+  let accuracy = $state<SensorAccuracy>('high');
+  const needsCalibration = $derived(accuracy === 'unreliable' || accuracy === 'low');
 
-  function onReading({ timestamp, values, accuracy }: Reading) {
+  function onReading({ timestamp, values, accuracy: readingAccuracy }: Reading) {
     const [x = 0, y = 0, z = 0] = values;
     const total = magnitude(values);
     latest = { x, y, z, total };
+    accuracy = readingAccuracy;
 
     if (recorder.recording) {
       if (recorder.count === 0) recordStart = timestamp;
       recorder.push(
-        [(timestamp - recordStart) / 1000, x, y, z, total, accuracy].map((v) =>
+        [(timestamp - recordStart) / 1000, x, y, z, total, readingAccuracy].map((v) =>
           typeof v === 'number' ? round(v) : v,
         ),
       );
@@ -37,7 +41,12 @@
 
   $effect(() => {
     if (!running) return;
-    const unsubscribe = sensors.subscribe('magnetometer', RATE_HZ, onReading);
+    const unsubscribe = sensors.subscribe(
+      'magnetometer',
+      RATE_HZ,
+      onReading,
+      (error) => (sensorError = error.message),
+    );
     void keepAwake(true);
     return () => {
       unsubscribe();
@@ -70,6 +79,14 @@
 
 <section>
   <h1>Magnetometer</h1>
+
+  {#if sensorError}
+    <p class="error" role="alert">{sensorError}</p>
+  {:else if needsCalibration}
+    <p class="hint" role="status">
+      Readings may be off. Wave the phone in a figure-8 a few times to recalibrate.
+    </p>
+  {/if}
 
   <Gauge value={latest?.total ?? null} min={0} max={100} unit="µT" label="Total field strength" />
 
@@ -141,6 +158,15 @@
     color: var(--color-text-muted);
     font-size: var(--text-sm);
     line-height: 1.5;
+  }
+
+  .hint {
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-warning);
+    border-radius: var(--radius-sm);
+    color: var(--color-warning);
+    font-size: var(--text-sm);
+    text-align: center;
   }
 
   .error {

@@ -1,4 +1,4 @@
-import { SIMULATED_SENSORS, type SensorModel } from './models';
+import { SIMULATED_EXTRA_SENSORS, SIMULATED_SENSORS, type SensorModel } from './models';
 import type { ReadingListener, SensorInfo, SensorSource, SensorType } from './types';
 
 /** Generates synthetic readings on timers, for development without a phone. */
@@ -10,7 +10,10 @@ export class SimulatedSource implements SensorSource {
   constructor(private readonly now: () => number = () => performance.now()) {}
 
   async listSensors(): Promise<SensorInfo[]> {
-    return Object.values(SIMULATED_SENSORS).map((sensor) => sensor.info);
+    return [
+      ...Object.values(SIMULATED_SENSORS).map((sensor) => sensor.info),
+      ...SIMULATED_EXTRA_SENSORS,
+    ];
   }
 
   async start(type: SensorType, rateHz: number): Promise<void> {

@@ -1,4 +1,7 @@
-/** Sensor kinds fieldglass knows about. Names follow Android's Sensor.TYPE_* constants. */
+/**
+ * Sensor kinds fieldglass knows about. Names follow Android's Sensor.TYPE_* constants.
+ * Keep in sync with TYPES in android/.../sensors/SensorsPlugin.kt.
+ */
 export type SensorType =
   | 'accelerometer'
   | 'gravity'
@@ -21,15 +24,23 @@ export interface Reading {
 }
 
 export interface SensorInfo {
-  type: SensorType;
+  /** The fieldglass name, for the one sensor of each kind the app uses. Null for all others. */
+  type: SensorType | null;
+  /** Android's type string, e.g. "android.sensor.magnetic_field". */
+  androidType: string;
   name: string;
   vendor: string;
+  version: number;
   /** Maximum value the sensor can report, in its native unit. */
   maxRange: number;
   /** Smallest change the sensor can report, in its native unit. */
   resolution: number;
-  /** Fastest supported sample rate in Hz, or 0 if unknown. */
+  /** Power draw in milliamps, as reported by the manufacturer. */
+  powerMa: number;
+  /** Fastest supported sample rate in Hz, or 0 for sensors that only report on change. */
   maxRateHz: number;
+  /** Wake-up sensors can wake the phone from sleep to deliver readings. */
+  wakeUp: boolean;
 }
 
 export type ReadingListener = (reading: Reading) => void;

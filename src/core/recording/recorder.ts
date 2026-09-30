@@ -40,8 +40,12 @@ export class Recorder {
   }
 
   toCSV(): string {
-    return [this.columns, ...this.rows].map((row) => row.map(csvField).join(',')).join('\n') + '\n';
+    return toCSV(this.columns, this.rows);
   }
+}
+
+export function toCSV(columns: readonly string[], rows: readonly Row[]): string {
+  return [columns, ...rows].map((row) => row.map(csvField).join(',')).join('\n') + '\n';
 }
 
 function csvField(value: number | string): string {
