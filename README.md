@@ -10,7 +10,7 @@ you what your hardware reports and lets you record it, but treat readings as ind
 
 ## Status
 
-Phase 1 (native sensors). On the phone, readings come from Android's sensors through a native
+Phase 2 (metal detector). On the phone, readings come from Android's sensors through a native
 plugin. In a desktop browser the same screens run on a simulator, and a yellow "Simulated data"
 badge says so.
 
@@ -19,6 +19,10 @@ Tools so far:
 - **Sensor info**: every sensor the phone reports, with specs, live values, and a CSV export of
   the list.
 - **Magnetometer**: total field and X/Y/Z, with recording and CSV export.
+- **Metal detector**: change in field strength from a zero point, with a live trace, a tone that
+  rises with the signal, and three sensitivity levels. Built on the uncalibrated magnetometer minus
+  Android's bias estimate, so turning the phone doesn't register as metal and a bias update
+  re-zeroes instead of looking like a find.
 
 ## Stack
 

@@ -29,8 +29,9 @@ export const TOOLS: ToolDefinition[] = [
   {
     id: 'metal-detector',
     name: 'Metal detector',
-    summary: 'Find ferrous metal by its disturbance of the field',
-    sensors: ['magnetometer'],
+    summary: 'Find iron, steel and magnets by how they bend the field',
+    sensors: ['magnetometer-uncalibrated'],
+    load: () => import('../tools/metal-detector/MetalDetector.svelte'),
   },
   {
     id: 'level',
